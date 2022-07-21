@@ -1,5 +1,9 @@
 package com.example.api.service;
 
+import com.example.api.vo.LoginVo;
+
+import java.io.IOException;
+
 public interface LoginService {
-    String login(String username,String password);
+    Object login(LoginVo loginVo) throws IOException;
 }

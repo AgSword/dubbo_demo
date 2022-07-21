@@ -1,2 +1,11 @@
-com\example\provider\ProviderApplication.class
+com\example\provider\mapper\UserMapper.class
 com\example\provider\service\impl\LoginProviderServiceImpl.class
+com\example\provider\util\MD5Util.class
+com\example\provider\service\ScoreService.class
+com\example\provider\mapper\ScoreMapper.class
+com\example\provider\bean\Score.class
+com\example\provider\bean\User.class
+com\example\provider\service\impl\ScoreServiceImpl.class
+com\example\provider\service\UserService.class
+com\example\provider\ProviderApplication.class
+com\example\provider\service\impl\UserServiceImpl.class

@@ -1,11 +1,16 @@
 package com.example.provider.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.api.service.LoginService;
+import com.example.api.vo.LoginVo;
+import com.example.provider.bean.Score;
+import com.example.provider.bean.User;
+import com.example.provider.service.ScoreService;
+import com.example.provider.service.UserService;
+import com.example.provider.util.MD5Util;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
-import java.util.regex.Pattern;
 
 /**
  * @projectName: dubbo_demo
@@ -20,25 +25,24 @@ import java.util.regex.Pattern;
 @DubboService
 public class LoginProviderServiceImpl implements LoginService {
 
-    public static final Pattern mobilePattern = Pattern.compile("^1(3[0-9]|5[0-3,5-9]|7[1-3,5-8]|8[0-9])\\d{8}$");
+    @Autowired
+    ScoreService scoreService;
+
+    @Autowired
+    UserService userService;
 
     @Override
-    public String login(String username, String password) {
-        if (username == null || !StringUtils.hasLength(username)) {
-            return "用户名不能为空";
+    public Object login(LoginVo loginVo) {
+        String username = loginVo.getUsername();
+        String password = loginVo.getPassword();
+        User user = userService.getOne(new QueryWrapper<User>().eq("username",username));
+        if (user==null){
+            return "用户不存在";
         }
-        if (mobilePattern.matcher(username).matches() == false) {
-            return "用户名应为手机号码";
+        if (!MD5Util.MD5Encrypt(password).equals(user.getPassword())){
+            return "密码错误";
         }
-        if (password == null || !StringUtils.hasLength(password)) {
-            return "密码不能为空";
-        }
-        if (password.length() > 16) {
-            return "密码长度请小于16位";
-        }
-        if (username.equals("15062427921") && password.equals("nihao")) {
-            return "yes";
-        }
-        return "请重新输入";
+        Score score = scoreService.getOne(new QueryWrapper<Score>().eq("username", username));
+        return score;
     }
 }
