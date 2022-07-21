@@ -1,7 +1,6 @@
 package com.example.provider.util;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.tomcat.util.digester.Digester;
 
 /**
  * @projectName: dubbo_demo
