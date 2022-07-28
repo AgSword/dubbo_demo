@@ -30,3 +30,5 @@ spring:
     url: jdbc:mysql://localhost/dubbo_demo?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=true
     username: root
     password: liyinjian320623,
+
+
