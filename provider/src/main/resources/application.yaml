@@ -17,3 +17,8 @@ spring:
     url: jdbc:mysql://localhost/dubbo_demo?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=true
     username: root
     password: liyinjian320623,
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+  type-handlers-package: com.example.provider.handler

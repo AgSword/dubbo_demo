@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.provider.mapper.BlogMapper">
+    <!--    <select id="selectById" resultType="com.example.api.entity.Blog">-->
+    <!--        select * from t_blog where id = #{id}-->
+    <!--    </select>-->
+
+<!--    <insert id="insert">-->
+<!--        insert into t_blog(user_id,title,content,create_time,update_time,type,status) value-->
+<!--        (#{userId},#{title},#{content},#{createTime},#{updateTime},#{type},#{status,typeHandler="com.example.provider.handler.BlogStatusTypeHandler"})-->
+<!--    </insert>-->
+
+    <insert id="mulInsert">
+        insert into t_blog(user_id,title,content,create_time,update_time,type,status) values
+        <foreach collection="list" separator="," item="item">
+            (#{item.userId},#{item.title},#{item.content},#{item.createTime},#{item.updateTime},#{item.type},#{item.status})
+        </foreach>
+    </insert>
+
+    <select id="countAboutType" resultType="com.example.provider.dto.TypeCountDTO">
+        select b.name as name, count(1) as num
+        from t_blog as a
+        left join t_type as b
+        on a.type = b.id
+        group by a.type
+        order by num desc
+    </select>
+
+    <select id="countAboutBlog" resultType="com.example.provider.dto.BlogCountDTO">
+        select date_format(update_time,"%y-%m") as `time`, count(1) as num from t_blog
+        where 1=1
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        <if test="type != null">
+            and type = #{type}
+        </if>
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        <if test="startTime != null">
+            and datediff(day,#{startTime},update_time) >=0
+        </if>
+        <if test="endTime != null">
+            and datediff(day,update_time,#{endTime}) >=0
+        </if>
+        group by `time`
+        order by `time`
+
+    </select>
+
+
+</mapper>

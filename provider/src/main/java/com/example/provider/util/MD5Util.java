@@ -14,8 +14,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 public class MD5Util {
     private final static String salt = "1a2b3c";
 
-    public static String MD5Encrypt(String pw){
-        String s = salt.substring(0,2)+pw+salt.substring(4,6);
+    public static String MD5Encrypt(String pw) {
+        String s = salt.substring(0, 2) + pw + salt.substring(4, 6);
         return DigestUtils.md5Hex(s);
     }
 

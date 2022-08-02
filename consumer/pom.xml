@@ -54,6 +54,13 @@
             <artifactId>curator-framework</artifactId>
             <version>5.2.0</version>
         </dependency>
+<!--        dozer的依赖-->
+        <dependency>
+            <groupId>net.sf.dozer</groupId>
+            <artifactId>dozer</artifactId>
+            <version>5.5.1</version>
+        </dependency>
+<!--        项目中其他模块的依赖-->
         <dependency>
             <groupId>com.example</groupId>
             <artifactId>provider</artifactId>
