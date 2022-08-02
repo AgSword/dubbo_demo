@@ -1,35 +1,33 @@
 package com.example.api.api;
 
 
+import com.example.api.dto.BlogCountDTO;
 import com.example.api.dto.CountAboutBlogDTO;
-import com.example.api.dto.Response;
+import com.example.api.dto.TypeCountDTO;
 import com.example.api.entity.Blog;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public interface BlogService {
-    Response insertBlog(Blog blog);
+    Integer insertBlog(Blog blog);
 
-    Response selectBlogById(Integer id);
+    Blog selectBlogById(Integer id);
 
-    Response getBlogList(List<Integer> ids);
+    Integer updateBlogById(Blog blog) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
 
-    Response updateBlogById(Blog blog);
+    Integer deleteBlogById(Integer id);
 
-    Response updateBlogs(List<Integer> ids);
+    List<Blog> selectAllBlogs();
 
-    Response deleteBlogById(Integer id);
+    Integer fileImport(MultipartFile file);
 
-    Response selectAllBlogs();
-
-    Response fileImport(MultipartFile file);
-
-    Response excelImport(MultipartFile file);
+    void excelImport(MultipartFile file);
 
     Integer test(List<Blog> list);
 
-    Response countAboutType();
+    List<TypeCountDTO> countAboutType();
 
-    Response countAboutBlog(CountAboutBlogDTO countAboutBlogDTO);
+    List<BlogCountDTO> countAboutBlog(CountAboutBlogDTO countAboutBlogDTO);
 }

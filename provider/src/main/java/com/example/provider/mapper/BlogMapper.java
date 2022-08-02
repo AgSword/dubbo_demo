@@ -1,14 +1,12 @@
 package com.example.provider.mapper;
 
 import com.example.api.dto.CountAboutBlogDTO;
-import com.example.api.dto.Response;
 import com.example.api.entity.Blog;
-import com.example.provider.dto.BlogCountDTO;
-import com.example.provider.dto.TypeCountDTO;
+import com.example.api.dto.BlogCountDTO;
+import com.example.api.dto.TypeCountDTO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface BlogMapper {

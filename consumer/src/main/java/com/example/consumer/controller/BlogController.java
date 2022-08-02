@@ -1,7 +1,8 @@
 package com.example.consumer.controller;
 
 import com.example.api.api.BlogService;
-import com.example.api.dto.Response;
+import com.example.api.enums.RespStatus;
+import com.example.consumer.vo.Response;
 import com.example.api.entity.Blog;
 import com.example.consumer.utils.BeanMapper;
 import com.example.consumer.vo.InsetOneBlogReqVo;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,7 +44,14 @@ public class BlogController {
      */
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public Response selectById(Integer id) {
-        return blogService.selectBlogById(id);
+        if (id == null) {
+            return Response.fail(RespStatus.SELECT_ID_IS_NULL.getStatus(), RespStatus.SELECT_ID_IS_NULL.getMsg());
+        }
+        Blog blog = blogService.selectBlogById(id);
+        if (blog == null) {
+            return Response.fail(RespStatus.SELECT_IS_NULL.getStatus(), RespStatus.SELECT_IS_NULL.getMsg());
+        }
+        return Response.ok(blog);
     }
 
     /**
@@ -52,7 +61,7 @@ public class BlogController {
      */
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public Response selectAllBlogs() {
-        return blogService.selectAllBlogs();
+        return Response.ok(blogService.selectAllBlogs());
     }
 
     /**
@@ -65,7 +74,14 @@ public class BlogController {
     @PostMapping(value = "/")
     public Response insertOne(@RequestBody InsetOneBlogReqVo blogReqVo) {
         Blog blog = beanMapper.convert(blogReqVo, Blog.class);
-        return blogService.insertBlog(blog);
+        if (blog == null) {
+            return Response.fail(RespStatus.INSERT_ID_NULL.getStatus(), RespStatus.INSERT_ID_NULL.getMsg());
+        }
+        Integer influence = blogService.insertBlog(blog);
+        if (influence != 1){
+            return Response.fail(RespStatus.SINGLE_INSERT_DATABASE_FAIL.getStatus(),RespStatus.SINGLE_INSERT_DATABASE_FAIL.getMsg());
+        }
+        return Response.ok();
     }
 
     /**
@@ -75,13 +91,17 @@ public class BlogController {
      * @return
      */
     @PostMapping(value = "/fileImport")
-    public Response fileImport(MultipartFile file) {
-        return blogService.fileImport(file);
+    public Response fileImport(MultipartFile file){
+        if (blogService.fileImport(file)!=1){
+            return Response.fail(RespStatus.FILE_IMPORT_ERROR.getStatus(),RespStatus.FILE_IMPORT_ERROR.getMsg());
+        }
+        return Response.ok();
     }
 
     @PostMapping(value = "excelImport")
     public Response excelImport(MultipartFile file) {
-        return blogService.excelImport(file);
+        blogService.excelImport(file);
+        return Response.ok();
     }
 
     /**
@@ -92,7 +112,13 @@ public class BlogController {
      */
     @RequestMapping(value = "/", method = RequestMethod.DELETE)
     public Response deleteById(Integer id) {
-        return blogService.deleteBlogById(id);
+        if (id == null) {
+            return Response.fail(RespStatus.DELETE_ID_IS_NULL.getStatus(), RespStatus.DELETE_ID_IS_NULL.getMsg());
+        }
+        if (blogService.deleteBlogById(id) != 1) {
+            return Response.fail(RespStatus.DELETE_DATABASE_FAIL.getStatus(), RespStatus.DELETE_DATABASE_FAIL.getMsg());
+        }
+        return Response.ok();
     }
 
     /**
@@ -102,9 +128,12 @@ public class BlogController {
      * @return
      */
     @RequestMapping(value = "/", method = RequestMethod.PUT)
-    public Response updateOne(@RequestBody UpdateOneBlogReqVo reqVo) {
+    public Response updateOne(@RequestBody UpdateOneBlogReqVo reqVo) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Blog blog = beanMapper.convert(reqVo, Blog.class);
-        return blogService.updateBlogById(blog);
+        if (blogService.updateBlogById(blog)!=1){
+            return Response.fail(RespStatus.UPDATE_DATABASE_FAIL.getStatus(),RespStatus.UPDATE_DATABASE_FAIL.getMsg());
+        }
+        return Response.ok();
     }
 
 

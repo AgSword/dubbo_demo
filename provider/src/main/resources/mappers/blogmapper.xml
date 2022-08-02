@@ -19,7 +19,7 @@
         </foreach>
     </insert>
 
-    <select id="countAboutType" resultType="com.example.provider.dto.TypeCountDTO">
+    <select id="countAboutType" resultType="com.example.api.dto.TypeCountDTO">
         select b.name as name, count(1) as num
         from t_blog as a
         left join t_type as b
@@ -28,7 +28,7 @@
         order by num desc
     </select>
 
-    <select id="countAboutBlog" resultType="com.example.provider.dto.BlogCountDTO">
+    <select id="countAboutBlog" resultType="com.example.api.dto.BlogCountDTO">
         select date_format(update_time,"%y-%m") as `time`, count(1) as num from t_blog
         where 1=1
         <if test="userId != null">

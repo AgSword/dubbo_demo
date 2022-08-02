@@ -1,9 +1,8 @@
-package com.example.api.dto;
+package com.example.consumer.vo;
 
 import com.example.api.enums.RespStatus;
-import lombok.AllArgsConstructor;
+import com.example.provider.exception.BusinessException;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -47,5 +46,10 @@ public class Response<T> implements Serializable {
 
     public static Response fail(Integer status, String msg) {
         return new Response(status, msg);
+    }
+
+    public static Response defineError(BusinessException e){
+        return new Response(e.getErrorCode(),e.getErrorMsg());
+
     }
 }

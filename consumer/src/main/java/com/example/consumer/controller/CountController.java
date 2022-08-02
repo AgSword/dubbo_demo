@@ -2,7 +2,8 @@ package com.example.consumer.controller;
 
 import com.example.api.api.BlogService;
 import com.example.api.dto.CountAboutBlogDTO;
-import com.example.api.dto.Response;
+import com.example.api.enums.RespStatus;
+import com.example.consumer.vo.Response;
 import com.example.consumer.utils.BeanMapper;
 import com.example.consumer.vo.CountAboutBlogVo;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -36,7 +37,7 @@ public class CountController {
      */
     @GetMapping(value = "/type")
     public Response countAboutType() {
-        return blogService.countAboutType();
+        return Response.ok(blogService.countAboutType());
     }
 
     /**
@@ -47,6 +48,9 @@ public class CountController {
     @GetMapping(value = "/blog")
     public Response countAboutBlog(@RequestBody CountAboutBlogVo countAboutBlogVo) {
         CountAboutBlogDTO countAboutBlogDTO = beanMapper.convert(countAboutBlogVo, CountAboutBlogDTO.class);
-        return blogService.countAboutBlog(countAboutBlogDTO);
+        if (countAboutBlogDTO == null) {
+            return Response.fail(RespStatus.COUNT_PARA_IS_NULL.getStatus(), RespStatus.COUNT_PARA_IS_NULL.getMsg());
+        }
+        return Response.ok(blogService.countAboutBlog(countAboutBlogDTO));
     }
 }

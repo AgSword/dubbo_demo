@@ -1,23 +1,27 @@
-package com.example.provider.dto;
+package com.example.api.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+
+
 
 /**
  * @Description
  * @projectName: dubbo_demo
  * @package: com.example.provider.dto
- * @className: TypeCountDTO
+ * @className: BlogCountDTO
  * @author: LiYinjian
- * @date: 2022/8/1 14:09
+ * @date: 2022/8/1 15:22
  * @version: 1.0
  */
 
 @Data
 @AllArgsConstructor
-public class TypeCountDTO implements Serializable {
-    private String name;
+@NoArgsConstructor
+public class BlogCountDTO implements Serializable {
+    private String time;
     private Integer num;
 }

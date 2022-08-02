@@ -2,10 +2,12 @@ package com.example.provider.service;
 
 import com.example.api.api.BlogService;
 import com.example.api.dto.CountAboutBlogDTO;
-import com.example.api.dto.Response;
 import com.example.api.entity.Blog;
 import com.example.api.enums.RespStatus;
 import com.example.api.enums.StatusEnum;
+import com.example.api.dto.TypeCountDTO;
+import com.example.api.dto.BlogCountDTO;
+import com.example.provider.exception.BusinessException;
 import com.example.provider.mapper.BlogMapper;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -49,15 +51,8 @@ public class BlogServiceImpl implements BlogService {
      * @return
      */
     @Override
-    public Response insertBlog(Blog blog) {
-        if (blog == null) {
-            return Response.fail(RespStatus.INSERT_ID_NULL.getStatus(), RespStatus.INSERT_ID_NULL.getMsg());
-        }
-        int influenced = blogMapper.insert(blog);
-        if (influenced != 1) {
-            return Response.fail(RespStatus.SINGLE_INSERT_DATABASE_FAIL.getStatus(), RespStatus.SINGLE_INSERT_DATABASE_FAIL.getMsg());
-        }
-        return Response.ok();
+    public Integer insertBlog(Blog blog) {
+        return blogMapper.insert(blog);
     }
 
     /**
@@ -66,17 +61,17 @@ public class BlogServiceImpl implements BlogService {
      * @return
      */
     @Override
-    public Response selectAllBlogs() {
-        return Response.ok(blogMapper.selectAll());
+    public List<Blog> selectAllBlogs() {
+        return blogMapper.selectAll();
     }
 
     @Override
-    public Response fileImport(MultipartFile file) {
+    public Integer fileImport(MultipartFile file) {
         //传入的文件的文件名规范为   title_userId_type_published.后缀名
         String fileName = file.getOriginalFilename().split("\\.")[0];
         String[] s = fileName.split("_");
         if (s.length != 4) {
-            return Response.fail(RespStatus.FILENAME_ERROR.getStatus(), RespStatus.FILENAME_ERROR.getMsg());
+            throw new BusinessException(RespStatus.FILENAME_ERROR.getStatus(),RespStatus.FILENAME_ERROR.getMsg());
         }
         Blog blog = new Blog();
         try {
@@ -86,7 +81,7 @@ public class BlogServiceImpl implements BlogService {
             blog.setType(Integer.parseInt(s[2]));
             blog.setStatus(StatusEnum.getStatusEnum(Integer.parseInt(s[3])));
         } catch (Exception e) {
-            return Response.fail(RespStatus.FILENAME_ERROR.getStatus(), RespStatus.FILENAME_ERROR.getMsg());
+            throw new BusinessException(RespStatus.FILENAME_ERROR.getStatus(),RespStatus.FILENAME_ERROR.getMsg());
         }
         //获取blog的content
         StringBuilder content = new StringBuilder();
@@ -97,15 +92,12 @@ public class BlogServiceImpl implements BlogService {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return Response.fail(RespStatus.FILE_IMPORT_ERROR.getStatus(), RespStatus.FILE_IMPORT_ERROR.getMsg());
-        }
-        if (!StringUtils.hasLength(content.toString())) {
-            return Response.fail(RespStatus.FILE_IS_NULL.getStatus(), RespStatus.FILE_IS_NULL.getMsg());
+            throw new BusinessException(RespStatus.FILE_IMPORT_ERROR.getStatus(),RespStatus.FILE_IMPORT_ERROR.getMsg());
         }
         blog.setCreateTime(new Date());
         blog.setUpdateTime(new Date());
         blog.setContent(content.toString());
-        return Response.ok(blogMapper.insert(blog));
+        return blogMapper.insert(blog);
     }
 
     /**
@@ -115,10 +107,10 @@ public class BlogServiceImpl implements BlogService {
      * @return
      */
     @Override
-    public Response excelImport(MultipartFile file) {
+    public void excelImport(MultipartFile file) {
         List<Blog> list = new ArrayList<>();
         ;
-        Workbook workbook = null;
+        Workbook workbook;
         String filename = file.getOriginalFilename();
         try {
             if (filename != null) {
@@ -128,14 +120,14 @@ public class BlogServiceImpl implements BlogService {
                 } else if (filename.endsWith("xlsx")) {
                     workbook = new XSSFWorkbook(file.getInputStream());
                 } else {
-                    return Response.fail(RespStatus.IS_NOT_EXCEL.getStatus(), RespStatus.IS_NOT_EXCEL.getMsg());
+                    throw new BusinessException(RespStatus.IS_NOT_EXCEL.getStatus(),RespStatus.IS_NOT_EXCEL.getMsg());
                 }
                 //excel的工作簿默认为Sheet1
                 Sheet sheet = workbook.getSheet("Sheet1");
                 int lastRowNum = sheet.getLastRowNum();
                 //excel中row数总共为0，则说明excel表格为空
                 if (lastRowNum == 0) {
-                    return Response.fail(RespStatus.EXCEL_IS_NULL.getStatus(), RespStatus.EXCEL_IS_NULL.getMsg());
+                    throw new BusinessException(RespStatus.EXCEL_IS_NULL.getStatus(),RespStatus.EXCEL_IS_NULL.getMsg());
                 }
                 for (int i = 1; i <= lastRowNum; i++) {
                     Row row = sheet.getRow(i);
@@ -145,16 +137,14 @@ public class BlogServiceImpl implements BlogService {
                 }
                 Integer influenced = blogMapper.mulInsert(list);
                 if (influenced != list.size()) {
-                    return Response.fail(RespStatus.MUL_INSERT_DATABASE_FAIL.getStatus(), RespStatus.MUL_INSERT_DATABASE_FAIL.getMsg());
+                    throw new BusinessException(RespStatus.MUL_INSERT_DATABASE_FAIL.getStatus(),RespStatus.MUL_INSERT_DATABASE_FAIL.getMsg());
                 }
             } else {
-                return Response.fail(RespStatus.EXCEL_IS_EXIST.getStatus(), RespStatus.EXCEL_IS_EXIST.getMsg());
+                throw new BusinessException(RespStatus.EXCEL_IS_EXIST.getStatus(),RespStatus.EXCEL_IS_EXIST.getMsg());
             }
         } catch (IOException e) {
-            return Response.fail(500, e.getMessage());
+            e.printStackTrace();
         }
-
-        return null;
     }
 
 
@@ -194,20 +184,8 @@ public class BlogServiceImpl implements BlogService {
      * @return
      */
     @Override
-    public Response selectBlogById(Integer id) {
-        if (id == null) {
-            return Response.fail(RespStatus.SELECT_ID_IS_NULL.getStatus(), RespStatus.SELECT_ID_IS_NULL.getMsg());
-        }
-        Blog blog = blogMapper.selectById(id);
-        if (blog == null) {
-            return Response.fail(RespStatus.SELECT_IS_NULL.getStatus(), RespStatus.SELECT_IS_NULL.getMsg());
-        }
-        return Response.ok(blog);
-    }
-
-    @Override
-    public Response getBlogList(List<Integer> ids) {
-        return null;
+    public Blog selectBlogById(Integer id) {
+        return blogMapper.selectById(id);
     }
 
     /**
@@ -218,75 +196,51 @@ public class BlogServiceImpl implements BlogService {
      * @return
      */
     @Override
-    public Response updateBlogById(Blog newBlog) {
+    public Integer updateBlogById(Blog newBlog) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Blog oldBlog = blogMapper.selectById(newBlog.getId());  // 数据库里原来的对象
         Field[] fields = Blog.class.getDeclaredFields();
         for (Field field : fields) {
             field.setAccessible(true);
             String name = field.getName();
             Method method = null;
-            try {
-                method = Blog.class.getMethod("get" + name.substring(0, 1).toUpperCase() + name.substring(1));
-                Object o = method.invoke(newBlog);  // 新的对象的属性不为空，那么就要复制到老对象中
-                if (o != null) {
-                    Object para = null;
-                    switch (name) {
-                        case "id":
-                            para = Integer.class;
-                            break;
-                        case "userId":
-                            para = Integer.class;
-                            break;
-                        case "type":
-                            para = Integer.class;
-                            break;
-                        case "updateTime":
-                            para = Date.class;
-                            break;
-                        case "title":
-                            para = String.class;
-                            break;
-                        case "content":
-                            para = String.class;
-                            break;
-                        case "published":
-                            para = Boolean.class;
-                            break;
-
-                    }
-                    Method setter = Blog.class.getMethod("set" + name.substring(0, 1).toUpperCase() + name.substring(1), (Class<?>) para);
-                    setter.invoke(oldBlog, o);
+            method = Blog.class.getMethod("get" + name.substring(0, 1).toUpperCase() + name.substring(1));
+            Object o = method.invoke(newBlog);  // 新的对象的属性不为空，那么就要复制到老对象中
+            if (o != null) {
+                Object para = null;
+                switch (name) {
+                    case "id":
+                        para = Integer.class;
+                        break;
+                    case "userId":
+                        para = Integer.class;
+                        break;
+                    case "type":
+                        para = Integer.class;
+                        break;
+                    case "updateTime":
+                        para = Date.class;
+                        break;
+                    case "title":
+                        para = String.class;
+                        break;
+                    case "content":
+                        para = String.class;
+                        break;
+                    case "published":
+                        para = Boolean.class;
+                        break;
                 }
-            } catch (NoSuchMethodException e) {
-                return Response.fail(500, e.getMessage());
-            } catch (InvocationTargetException e) {
-                return Response.fail(500, e.getMessage());
-            } catch (IllegalAccessException e) {
-                return Response.fail(500, e.getMessage());
+                Method setter = Blog.class.getMethod("set" + name.substring(0, 1).toUpperCase() + name.substring(1), (Class<?>) para);
+                setter.invoke(oldBlog, o);
             }
+
         }
-        int influenced = blogMapper.updateById(oldBlog);
-        if (influenced != 1) {
-            return Response.fail(RespStatus.UPDATE_DATABASE_FAIL.getStatus(), RespStatus.UPDATE_DATABASE_FAIL.getMsg());
-        }
-        return Response.ok();
+        return blogMapper.updateById(oldBlog);
     }
 
     @Override
-    public Response updateBlogs(List<Integer> ids) {
-        return null;
-    }
-
-    @Override
-    public Response deleteBlogById(Integer id) {
-        if (id == null) {
-            return Response.fail(RespStatus.DELETE_ID_IS_NULL.getStatus(), RespStatus.DELETE_ID_IS_NULL.getMsg());
-        }
-        int influenced = blogMapper.deleteById(id);
-        if (influenced != 1) {
-            return Response.fail(RespStatus.DELETE_DATABASE_FAIL.getStatus(), RespStatus.DELETE_DATABASE_FAIL.getMsg());
-        }
-        return Response.ok();
+    public Integer deleteBlogById(Integer id) {
+        return blogMapper.deleteById(id);
     }
 
     @Override
@@ -295,16 +249,13 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public Response countAboutType() {
-        return Response.ok(blogMapper.countAboutType());
+    public List<TypeCountDTO> countAboutType() {
+        return blogMapper.countAboutType();
     }
 
     @Override
-    public Response countAboutBlog(CountAboutBlogDTO countAboutBlogDTO) {
-        if (countAboutBlogDTO == null) {
-            return Response.fail(RespStatus.COUNT_PARA_IS_NULL.getStatus(), RespStatus.COUNT_PARA_IS_NULL.getMsg());
-        }
-        return Response.ok(blogMapper.countAboutBlog(countAboutBlogDTO));
-    }
+    public List<BlogCountDTO> countAboutBlog(CountAboutBlogDTO countAboutBlogDTO) {
 
+        return blogMapper.countAboutBlog(countAboutBlogDTO);
+    }
 }

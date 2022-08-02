@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public enum RespStatus implements Serializable {
     OK(200, "OK"),
+    SERVER_ERROR(500,"服务端错误"),
     SELECT_ID_IS_NULL(50010, "查询失败，id为空"),
     SELECT_IS_NULL(50011, "查询结果为空"),
     INSERT_ID_NULL(50020, "插入失败，id为空"),
