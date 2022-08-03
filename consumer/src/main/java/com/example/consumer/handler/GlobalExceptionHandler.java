@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
         if (e instanceof BindException){
             BindException bindException = (BindException) e;
             String message = bindException.getBindingResult().getFieldError().getDefaultMessage();
-            return new Response(50001,message);
+            return new Response(50001,"参数验证错误："+message);
         }
         return Response.fail(RespStatus.SERVER_ERROR.getStatus(), RespStatus.SERVER_ERROR.getMsg());
     }

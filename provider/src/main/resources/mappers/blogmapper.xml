@@ -7,10 +7,10 @@
     <!--        select * from t_blog where id = #{id}-->
     <!--    </select>-->
 
-<!--    <insert id="insert">-->
-<!--        insert into t_blog(user_id,title,content,create_time,update_time,type,status) value-->
-<!--        (#{userId},#{title},#{content},#{createTime},#{updateTime},#{type},#{status,typeHandler="com.example.provider.handler.BlogStatusTypeHandler"})-->
-<!--    </insert>-->
+    <!--    <insert id="insert">-->
+    <!--        insert into t_blog(user_id,title,content,create_time,update_time,type,status) value-->
+    <!--        (#{userId},#{title},#{content},#{createTime},#{updateTime},#{type},#{status,typeHandler="com.example.provider.handler.BlogStatusTypeHandler"})-->
+    <!--    </insert>-->
 
     <insert id="mulInsert">
         insert into t_blog(user_id,title,content,create_time,update_time,type,status) values
@@ -22,8 +22,8 @@
     <select id="countAboutType" resultType="com.example.api.dto.TypeCountDTO">
         select b.name as name, count(1) as num
         from t_blog as a
-        left join t_type as b
-        on a.type = b.id
+                 left join t_type as b
+                           on a.type = b.id
         group by a.type
         order by num desc
     </select>
@@ -41,10 +41,10 @@
             and status = #{status}
         </if>
         <if test="startTime != null">
-            and datediff(day,#{startTime},update_time) >=0
+            and timediff(update_time, #{startTime}) >=0
         </if>
         <if test="endTime != null">
-            and datediff(day,update_time,#{endTime}) >=0
+            and datediff(#{endTime}, update_time) >=0
         </if>
         group by `time`
         order by `time`

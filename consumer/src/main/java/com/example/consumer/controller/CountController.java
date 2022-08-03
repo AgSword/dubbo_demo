@@ -45,7 +45,7 @@ public class CountController {
      *
      * @return
      */
-    @GetMapping(value = "/blog")
+    @PostMapping(value = "/blog")
     public Response countAboutBlog(@RequestBody CountAboutBlogVo countAboutBlogVo) {
         CountAboutBlogDTO countAboutBlogDTO = beanMapper.convert(countAboutBlogVo, CountAboutBlogDTO.class);
         if (countAboutBlogDTO == null) {

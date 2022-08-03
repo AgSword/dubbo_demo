@@ -5,10 +5,11 @@ import com.example.api.enums.RespStatus;
 import com.example.consumer.vo.Response;
 import com.example.api.entity.Blog;
 import com.example.consumer.utils.BeanMapper;
-import com.example.consumer.vo.InsetOneBlogReqVo;
+import com.example.consumer.vo.InsertOneBlogReqVo;
 import com.example.consumer.vo.UpdateOneBlogReqVo;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -72,14 +73,14 @@ public class BlogController {
      * @return
      */
     @PostMapping(value = "/")
-    public Response insertOne(@RequestBody InsetOneBlogReqVo blogReqVo) {
+    public Response insertOne(@RequestBody @Validated InsertOneBlogReqVo blogReqVo) {
         Blog blog = beanMapper.convert(blogReqVo, Blog.class);
         if (blog == null) {
             return Response.fail(RespStatus.INSERT_ID_NULL.getStatus(), RespStatus.INSERT_ID_NULL.getMsg());
         }
         Integer influence = blogService.insertBlog(blog);
-        if (influence != 1){
-            return Response.fail(RespStatus.SINGLE_INSERT_DATABASE_FAIL.getStatus(),RespStatus.SINGLE_INSERT_DATABASE_FAIL.getMsg());
+        if (influence != 1) {
+            return Response.fail(RespStatus.SINGLE_INSERT_DATABASE_FAIL.getStatus(), RespStatus.SINGLE_INSERT_DATABASE_FAIL.getMsg());
         }
         return Response.ok();
     }
@@ -91,9 +92,9 @@ public class BlogController {
      * @return
      */
     @PostMapping(value = "/fileImport")
-    public Response fileImport(MultipartFile file){
-        if (blogService.fileImport(file)!=1){
-            return Response.fail(RespStatus.FILE_IMPORT_ERROR.getStatus(),RespStatus.FILE_IMPORT_ERROR.getMsg());
+    public Response fileImport(MultipartFile file) {
+        if (blogService.fileImport(file) != 1) {
+            return Response.fail(RespStatus.FILE_IMPORT_ERROR.getStatus(), RespStatus.FILE_IMPORT_ERROR.getMsg());
         }
         return Response.ok();
     }
@@ -128,10 +129,10 @@ public class BlogController {
      * @return
      */
     @RequestMapping(value = "/", method = RequestMethod.PUT)
-    public Response updateOne(@RequestBody UpdateOneBlogReqVo reqVo) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public Response updateOne(@RequestBody @Validated UpdateOneBlogReqVo reqVo) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Blog blog = beanMapper.convert(reqVo, Blog.class);
-        if (blogService.updateBlogById(blog)!=1){
-            return Response.fail(RespStatus.UPDATE_DATABASE_FAIL.getStatus(),RespStatus.UPDATE_DATABASE_FAIL.getMsg());
+        if (blogService.updateBlogById(blog) != 1) {
+            return Response.fail(RespStatus.UPDATE_DATABASE_FAIL.getStatus(), RespStatus.UPDATE_DATABASE_FAIL.getMsg());
         }
         return Response.ok();
     }

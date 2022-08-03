@@ -26,7 +26,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateOneBlogReqVo {
-    @NotNull
+    @NotNull(message = "id不能为空")
     private Integer id;
     private Integer userId;
     private String title;

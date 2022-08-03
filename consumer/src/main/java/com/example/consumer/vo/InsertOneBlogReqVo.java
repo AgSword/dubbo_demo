@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-import javax.persistence.Convert;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -22,18 +21,18 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InsetOneBlogReqVo {
-    @NotNull
+public class InsertOneBlogReqVo {
+    @NotNull(message = "用户id不能为空")
     private Integer userId;
-    @NotNull
-    @NotEmpty
-    @Length(max = 24)
+    @NotNull(message = "标题不能为空")
+    @NotEmpty(message = "标题不能为空字符串")
+    @Length(max = 24,message = "标题长度不能超过24")
     private String title;
     private String content;
     private Date createTime;
     private Date updateTime;
-    @NotNull
+    @NotNull(message = "类别不能为空")
     private Integer type;
-    @NotNull
+    @NotNull(message = "状态不能为空")
     private StatusEnum status;
 }

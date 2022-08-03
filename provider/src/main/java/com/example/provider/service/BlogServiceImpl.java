@@ -226,8 +226,8 @@ public class BlogServiceImpl implements BlogService {
                     case "content":
                         para = String.class;
                         break;
-                    case "published":
-                        para = Boolean.class;
+                    case "status":
+                        para = StatusEnum.class;
                         break;
                 }
                 Method setter = Blog.class.getMethod("set" + name.substring(0, 1).toUpperCase() + name.substring(1), (Class<?>) para);

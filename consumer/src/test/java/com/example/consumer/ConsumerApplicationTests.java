@@ -2,15 +2,13 @@ package com.example.consumer;
 
 import com.example.api.enums.StatusEnum;
 import com.example.consumer.controller.BlogController;
-import com.example.consumer.vo.InsetOneBlogReqVo;
+import com.example.consumer.vo.InsertOneBlogReqVo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @SpringBootTest
 class ConsumerApplicationTests {
@@ -20,7 +18,7 @@ class ConsumerApplicationTests {
 
     @Test
     void insertBlog() {
-        InsetOneBlogReqVo reqVo = new InsetOneBlogReqVo();
+        InsertOneBlogReqVo reqVo = new InsertOneBlogReqVo();
         reqVo.setUserId(1);
         reqVo.setTitle("java的特性");
         reqVo.setContent("java的特性");
