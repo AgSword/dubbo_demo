@@ -1,8 +1,7 @@
-E:\javaProject\dubbo_demo\api\src\main\java\com\example\api\dto\Response.java
 E:\javaProject\dubbo_demo\api\src\main\java\com\example\api\entity\Blog.java
+E:\javaProject\dubbo_demo\api\src\main\java\com\example\api\dto\TypeCountDTO.java
 E:\javaProject\dubbo_demo\api\src\main\java\com\example\api\dto\CountAboutBlogDTO.java
-E:\javaProject\dubbo_demo\api\src\main\java\com\example\api\validator\IsMobileValidator.java
-E:\javaProject\dubbo_demo\api\src\main\java\com\example\api\util\ValidatorUtil.java
-E:\javaProject\dubbo_demo\api\src\main\java\com\example\api\validator\IsMobile.java
+E:\javaProject\dubbo_demo\api\src\main\java\com\example\api\dto\BlogCountDTO.java
+E:\javaProject\dubbo_demo\api\src\main\java\com\example\api\enums\StatusEnum.java
 E:\javaProject\dubbo_demo\api\src\main\java\com\example\api\api\BlogService.java
 E:\javaProject\dubbo_demo\api\src\main\java\com\example\api\enums\RespStatus.java
